@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol DateFormattingCodableStrategy {
+public protocol DateValueCodableStrategy {
     associatedtype RawValue: Codable
 
     static func decode(_ value: RawValue) throws -> Date
@@ -8,7 +8,7 @@ public protocol DateFormattingCodableStrategy {
 }
 
 @propertyWrapper
-public struct DateValue<Formatter: DateFormattingCodableStrategy>: Codable {
+public struct DateValue<Formatter: DateValueCodableStrategy>: Codable {
     private let value: Formatter.RawValue
     public var wrappedValue: Date
 

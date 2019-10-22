@@ -5,7 +5,7 @@ import Foundation
 /// `@YearMonthDayDate` decodes string values of format `y-MM-dd` as a `Date`. Encoding the `Date` will encode the value back into the original string format.
 ///
 /// For example, decoding json data with a `String` representation  of `"2001-01-01"` produces a valid `Date` representing January 1st, 2001.
-public struct YearMonthDayDateStrategy: DateFormattingCodableStrategy {
+public struct YearMonthDayStrategy: DateValueCodableStrategy {
     private static let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "y-MM-dd"
@@ -13,7 +13,7 @@ public struct YearMonthDayDateStrategy: DateFormattingCodableStrategy {
     }()
     
     public static func decode(_ value: String) throws -> Date {
-        if let date = YearMonthDayDateStrategy.dateFormatter.date(from: value) {
+        if let date = YearMonthDayStrategy.dateFormatter.date(from: value) {
             return date
         } else {
             throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Invalid Date Format!"))
@@ -21,6 +21,6 @@ public struct YearMonthDayDateStrategy: DateFormattingCodableStrategy {
     }
     
     public static func encode(_ date: Date) -> String {
-        return YearMonthDayDateStrategy.dateFormatter.string(from: date)
+        return YearMonthDayStrategy.dateFormatter.string(from: date)
     }
 }
