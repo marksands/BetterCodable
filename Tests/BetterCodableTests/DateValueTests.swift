@@ -6,7 +6,7 @@ import SwiftUI
 class CustomDateCodableValueTests: XCTestCase {
     func testDecodingAndEncodingISO8601DateString() throws {
         struct Fixture: Codable {
-            @ISO8601Date var iso8601: Date
+            @DateValue<ISO8601DateStrategy> var iso8601: Date
         }
         let jsonData = #"{"iso8601": "1996-12-19T16:39:57-08:00"}"#.data(using: .utf8)!
         
@@ -16,7 +16,7 @@ class CustomDateCodableValueTests: XCTestCase {
     
     func testDecodingAndEncodingRFC3339DateString() throws {
          struct Fixture: Codable {
-            @RFC3339Date var rfc3339Date: Date
+            @DateValue<RFC3339DateStrategy> var rfc3339Date: Date
         }
         let jsonData = #"{"rfc3339Date": "1996-12-19T16:39:57-08:00"}"#.data(using: .utf8)!
         
@@ -26,7 +26,7 @@ class CustomDateCodableValueTests: XCTestCase {
 
     func testDecodingAndEncodingUTCTimestamp() throws {
         struct Fixture: Codable {
-            @TimestampDate var timestamp: Date
+            @DateValue<TimestampDateStrategy> var timestamp: Date
         }
         let jsonData = #"{"timestamp": 851042397.0}"#.data(using: .utf8)!
         
@@ -36,7 +36,7 @@ class CustomDateCodableValueTests: XCTestCase {
     
     func testDecodingAndEncodingYearMonthDateString() throws {
         struct Fixture: Codable {
-            @YearMonthDayDate var ymd: Date
+            @DateValue<YearMonthDayDateStrategy> var ymd: Date
         }
         let jsonData = #"{"ymd": "1996-12-19"}"#.data(using: .utf8)!
         
