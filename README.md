@@ -157,19 +157,19 @@ print(result) // Response(sku: "12355", isAvailable: true)
 
 One common frustration with `Codable` is decoding entities that have mixed date formats. `JSONDecoder` comes built in with a handy `dateDecodingStrategy` property, but that uses the same date format for all dates that it will decode. And often, `JSONDecoder` lives elsewhere from the entity forcing tight coupling with the entities if you choose to use its date decoding strategy.
 
-Property wrappers are a nice solution to the aforementioned issues. It allows tight binding of the date formatting strategy directly with the property of the entity, and allows the `JSONDecoder` to remain decoupled from the enties it decodes. Below are a few common Date strategies, but they also serve as a template to implement a custom property wrapper to suit your spcific date format needs.
+Property wrappers are a nice solution to the aforementioned issues. It allows tight binding of the date formatting strategy directly with the property of the entity, and allows the `JSONDecoder` to remain decoupled from the entities it decodes. The `@DateValue` wrapper is generic across a custom `DateValueCodableStrategy`. This allows anyone to implement their own date decoding strategy and get the property wrapper behavior for free. Below are a few common Date strategies, but they also serve as a template to implement a custom property wrapper to suit your specific date format needs.
 
 The following property wrappers are heavily inspired by [Ian Keen](https://twitter.com/iankay).
 
-## @ISO8601Date
+## ISO8601Strategy
 
-`@ISO8601Date` relies on an `ISO8601DateFormatter` in order to decode `String` values into `Date`s. Encoding the date will encode the value into the original string value.
+`ISO8601Strategy` relies on an `ISO8601DateFormatter` in order to decode `String` values into `Date`s. Encoding the date will encode the value into the original string value.
 
 ### Usage
 
 ```Swift
 struct Response: Codable {
-    @ISO8601Date var date: Date
+    @DateValue<ISO8601Strategy> var date: Date
 }
 
 let json = #"{ "date": "1996-12-19T16:39:57-08:00" }"#.data(using: .utf8)!
@@ -178,15 +178,15 @@ let result = try JSONDecoder().decode(Response.self, from: json)
 // This produces a valid `Date` representing 39 minutes and 57 seconds after the 16th hour of December 19th, 1996 with an offset of -08:00 from UTC (Pacific Standard Time).
 ```
 
-## @RFC3339Date
+## RFC3339Strategy
 
-`@RFC3339Date` decodes RFC 3339 date strings into `Date`s. Encoding the date will encode the value back into the original string value.
+`RFC3339Strategy` decodes RFC 3339 date strings into `Date`s. Encoding the date will encode the value back into the original string value.
 
 ### Usage
 
 ```Swift
 struct Response: Codable {
-    @RFC3339Date var date: Date
+    @DateValue<RFC3339Strategy> var date: Date
 }
 
 let json = #"{ "date": "1996-12-19T16:39:57-08:00" }"#.data(using: .utf8)!
@@ -195,15 +195,15 @@ let result = try JSONDecoder().decode(Response.self, from: json)
 // This produces a valid `Date` representing 39 minutes and 57 seconds after the 16th hour of December 19th, 1996 with an offset of -08:00 from UTC (Pacific Standard Time).
 ```
 
-## @TimestampDate
+## TimestampStrategy
 
-`@TimestampDate` decodes `Double`s of a unix epoch into `Date`s. Encoding the date will encode the value into the original `TimeInterval` value.
+`TimestampStrategy` decodes `Double`s of a unix epoch into `Date`s. Encoding the date will encode the value into the original `TimeInterval` value.
 
 ### Usage
 
 ```Swift
 struct Response: Codable {
-    @TimestampDate var date: Date
+    @DateValue<TimestampStrategy> var date: Date
 }
 
 let json = #"{ "date": 978307200.0 }"#.data(using: .utf8)!
@@ -212,15 +212,15 @@ let result = try JSONDecoder().decode(Response.self, from: json)
 // This produces a valid `Date` representing January 1st, 2001.
 ```
 
-## @YearMonthDayDate
+## YearMonthDayStrategy
 
- `@YearMonthDayDate` decodes string values into `Date`s using the date format `y-MM-dd`. Encoding the date will encode the value back into the original string format.
+ `@DateValue<YearMonthDayStrategy>` decodes string values into `Date`s using the date format `y-MM-dd`. Encoding the date will encode the value back into the original string format.
 
 ### Usage
 
 ```Swift
 struct Response: Codable {
-    @YearMonthDayDate var date: Date
+    @DateValue<YearMonthDayStrategy> var date: Date
 }
 
 let json = #"{ "date": "2001-01-01" }"#.data(using: .utf8)!
@@ -233,8 +233,8 @@ Or lastly, you can mix and match date wrappers as needed where the benefits trul
 
 ```Swift
 struct Response: Codable {
-    @ISO8601Date var updatedAt: Date
-    @YearMonthDayDate var birthday: Date
+    @DateValue<ISO8601Strategy> var updatedAt: Date
+    @DateValue<YearMonthDayStrategy> var birthday: Date
 }
 
 let json = #"{ "updatedAt": "2019-10-19T16:14:32-05:00", "birthday": "1984-01-22" }"#.data(using: .utf8)!
