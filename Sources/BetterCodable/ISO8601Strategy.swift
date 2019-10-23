@@ -7,11 +7,10 @@ import Foundation
 /// For example, decoding json data with a `String` representation  of `"1996-12-19T16:39:57-08:00"` produces a valid `Date` representing 39 minutes and 57 seconds after the 16th hour of December 19th, 1996 with an offset of -08:00 from UTC (Pacific Standard Time).
 public struct ISO8601Strategy: DateValueCodableStrategy {
     public static func decode(_ value: String) throws -> Date {
-        if let date = ISO8601DateFormatter().date(from: value) {
-            return date
-        } else {
+        guard let date = ISO8601DateFormatter().date(from: value) else {
             throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Invalid Date Format!"))
         }
+        return date
     }
     
     public static func encode(_ date: Date) -> String {
