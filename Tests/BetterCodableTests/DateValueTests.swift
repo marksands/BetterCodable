@@ -39,6 +39,6 @@ class CustomDateCodableValueTests: XCTestCase {
         let jsonData = #"{"ymd": "1996-12-19"}"#.data(using: .utf8)!
         
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-        XCTAssertEqual(fixture.ymd, Date(timeIntervalSince1970: 850975200))
+        XCTAssertEqual(fixture.ymd, Date(timeIntervalSince1970: 850953600))
     }
 }

@@ -8,6 +8,8 @@ import Foundation
 public struct YearMonthDayStrategy: DateValueCodableStrategy {
     private static let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "y-MM-dd"
         return dateFormatter
     }()
