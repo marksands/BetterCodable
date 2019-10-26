@@ -78,7 +78,7 @@ print(result) // ["a": "A"]
 
 Optional Bools are weird. A type that once meant true or false, now has three possible states: `.some(true)`, `.some(false)`, or `.none`. And the `.none` condition _could_ indicate truthiness if BadDecisions™ were made.
 
-`@DefaultFalse` mitigates the confusion by defaulting decoded Bools to false if the Decoder is unable to decode the value, eitehr when null is encountered or some unexpected type.
+`@DefaultFalse` mitigates the confusion by defaulting decoded Bools to false if the Decoder is unable to decode the value, either when null is encountered or some unexpected type.
 
 ### Usage
 
@@ -137,7 +137,7 @@ All credit for this goes to [Ian Keen](https://twitter.com/iankay).
 
 Somtimes APIs can be unpredictable. They may treat some form of Identifiers or SKUs as `Int`s for one response and `String`s for another. Or you might find yourself encountering `"true"` when you expect a boolean. This is where `@LosslessValue` comes into play.
 
-`@LesslessValue` will attempt to decode a value into the type that you expect, preserving the data that would otherwise throw an exception or be lost altogether. 
+`@LosslessValue` will attempt to decode a value into the type that you expect, preserving the data that would otherwise throw an exception or be lost altogether. 
 
 ### Usage
 
