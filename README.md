@@ -137,7 +137,7 @@ All credit for this goes to [Ian Keen](https://twitter.com/iankay).
 
 Somtimes APIs can be unpredictable. They may treat some form of Identifiers or SKUs as `Int`s for one response and `String`s for another. Or you might find yourself encountering `"true"` when you expect a boolean. This is where `@LosslessValue` comes into play.
 
-`@LesslessValue` will attempt to decode a value into the type that you expect, preserving the data that would otherwise throw an exception or be lost altogether. 
+`@LosslessValue` will attempt to decode a value into the type that you expect, preserving the data that would otherwise throw an exception or be lost altogether. 
 
 ### Usage
 
