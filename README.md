@@ -78,7 +78,7 @@ print(result) // ["a": "A"]
 
 Optional Bools are weird. A type that once meant true or false, now has three possible states: `.some(true)`, `.some(false)`, or `.none`. And the `.none` condition _could_ indicate truthiness if BadDecisions™ were made.
 
-`@DefaultFalse` mitigates the confusion by defaulting decoded Bools to false if the Decoder is unable to decode the value, eitehr when null is encountered or some unexpected type.
+`@DefaultFalse` mitigates the confusion by defaulting decoded Bools to false if the Decoder is unable to decode the value, either when null is encountered or some unexpected type.
 
 ### Usage
 
