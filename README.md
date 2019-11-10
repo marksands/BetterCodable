@@ -82,7 +82,7 @@ While not provided in the source code, it's a sinch to create your own default s
 
 ```Swift
 struct RefreshDaily: DefaultCodableStrategy {
-    static var defaultValue { return CacheInterval.daily }
+    static var defaultValue: CacheInterval { return CacheInterval.daily }
 }
 
 struct Cache: Codable {
