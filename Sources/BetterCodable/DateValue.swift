@@ -1,5 +1,8 @@
 import Foundation
 
+/// A protocol for providing a custom strategy for encoding and decoding dates.
+///
+/// `DateValueCodableStrategy` provides a generic strategy type that the `DateValue` property wrapper can use to inject custom strategies for encoding and decoding date values.
 public protocol DateValueCodableStrategy {
     associatedtype RawValue: Codable
 
@@ -7,6 +10,9 @@ public protocol DateValueCodableStrategy {
     static func encode(_ date: Date) -> RawValue
 }
 
+/// Decodes and encodes dates using a strategy type.
+///
+/// `@DateValue` decodes dates using a `DateValueCodableStrategy` which provides custom decoding and encoding functionality.
 @propertyWrapper
 public struct DateValue<Formatter: DateValueCodableStrategy>: Codable {
     private let value: Formatter.RawValue
