@@ -74,6 +74,27 @@ let result = try JSONDecoder().decode(Response.self, from: json)
 print(result) // ["a": "A"]
 ```
 
+## @DefaultCodable
+
+`@DefaultCodable` provides a generic property wrapper that allows for default values using a custom `DefaultCodableStrategy`. This allows one to implement their own default behavior for missing data and get the property wrapper behavior for free. Below are a few common default strategies, but they also serve as a template to implement a custom property wrapper to suit your specific use case.
+
+While not provided in the source code, it's a sinch to create your own default strategy for your custom data flow.
+
+```Swift
+struct RefreshDaily: DefaultCodableStrategy {
+    static var defaultValue { return CacheInterval.daily }
+}
+
+struct Cache: Codable {
+    @DefaultCodable<RefreshDaily> var refreshInterval: CacheInterval
+}
+
+let json = #"{ "refreshInterval": null }"#.data(using: .utf8)!
+let result = try JSONDecoder().decode(Cache.self, from: json)
+
+print(result) // Cache(refreshInterval: .daily)
+```
+
 ## @DefaultFalse
 
 Optional Bools are weird. A type that once meant true or false, now has three possible states: `.some(true)`, `.some(false)`, or `.none`. And the `.none` condition _could_ indicate truthiness if BadDecisions™ were made.
