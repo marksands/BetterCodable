@@ -21,6 +21,16 @@ class CustomDateCodableValueTests: XCTestCase {
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         XCTAssertEqual(fixture.rfc3339Date, Date(timeIntervalSince1970: 851042397))
     }
+    
+    func testDecodingAndEncodingRFC2822DateString() throws {
+         struct Fixture: Codable {
+            @DateValue<RFC2822Strategy> var rfc2822Date: Date
+        }
+        let jsonData = #"{"rfc2822Date": "Fri, 27 Dec 2019 22:43:52 -0000"}"#.data(using: .utf8)!
+        
+        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        XCTAssertEqual(fixture.rfc2822Date, Date(timeIntervalSince1970: 1577486632))
+    }
 
     func testDecodingAndEncodingUTCTimestamp() throws {
         struct Fixture: Codable {
