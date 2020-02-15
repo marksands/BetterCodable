@@ -18,6 +18,13 @@ class DefaultEmptyArrayTests: XCTestCase {
         XCTAssertEqual(fixture.values, [])
         XCTAssertEqual(fixture.nonPrimitiveValues, [])
     }
+
+    func testDecodingKeyNotPresentDefaultsToEmptyArray() throws {
+        let jsonData = #"{}"#.data(using: .utf8)!
+        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        XCTAssertEqual(fixture.values, [])
+        XCTAssertEqual(fixture.nonPrimitiveValues, [])
+    }
     
     func testEncodingDecodedFailableArrayDefaultsToEmptyArray() throws {
         let jsonData = #"{ "values": null, "nonPrimitiveValues": null }"#.data(using: .utf8)!
