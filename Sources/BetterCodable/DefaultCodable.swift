@@ -30,3 +30,18 @@ public struct DefaultCodable<Default: DefaultCodableStrategy>: Codable {
 
 extension DefaultCodable: Equatable where Default.RawValue: Equatable { }
 extension DefaultCodable: Hashable where Default.RawValue: Hashable { }
+
+// MARK: - KeyedDecodingContainer
+public extension KeyedDecodingContainer {
+
+    /// Default implementation of decoding a DefaultCodable
+    ///
+    /// Decodes successfully if key is available if not fallsback to the default value provided.
+    func decode<P>(_: DefaultCodable<P>.Type, forKey key: Key) throws -> DefaultCodable<P> {
+        if let value = try decodeIfPresent(DefaultCodable<P>.self, forKey: key) {
+            return value
+        } else {
+            return DefaultCodable(wrappedValue: P.defaultValue)
+        }
+    }
+}

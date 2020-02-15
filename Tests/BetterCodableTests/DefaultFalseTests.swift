@@ -6,13 +6,19 @@ class DefaultFalseTests: XCTestCase {
         @DefaultFalse var truthy: Bool
     }
     
-    func testDecodingFailableArrayDefaultsToEmptyArray() throws {
+    func testDecodingFailableArrayDefaultsToFalse() throws {
         let jsonData = #"{ "truthy": null }"#.data(using: .utf8)!
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         XCTAssertEqual(fixture.truthy, false)
     }
+
+    func testDecodingKeyNotPresentDefaultsToFalse() throws {
+        let jsonData = #"{}"#.data(using: .utf8)!
+        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        XCTAssertEqual(fixture.truthy, false)
+    }
     
-    func testEncodingDecodedFailableArrayDefaultsToEmptyArray() throws {
+    func testEncodingDecodedFailableArrayDefaultsToFalse() throws {
         let jsonData = #"{ "truthy": null }"#.data(using: .utf8)!
         var _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         
@@ -23,7 +29,7 @@ class DefaultFalseTests: XCTestCase {
         XCTAssertEqual(fixture.truthy, true)
     }
     
-    func testEncodingDecodedFulfillableArrayRetainsContents() throws {
+    func testEncodingDecodedFulfillableBoolRetainsValue() throws {
         let jsonData = #"{ "truthy": true }"#.data(using: .utf8)!
         let _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         let fixtureData = try JSONEncoder().encode(_fixture)

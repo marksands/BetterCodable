@@ -11,6 +11,12 @@ class DefaultEmptyDictionaryTests: XCTestCase {
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         XCTAssertEqual(fixture.stringToInt, [:])
     }
+
+    func testDecodingKeyNotPresentDefaultsToEmptyDictionary() throws {
+        let jsonData = #"{}"#.data(using: .utf8)!
+        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        XCTAssertEqual(fixture.stringToInt, [:])
+    }
     
     func testEncodingDecodedFailableDictionaryDefaultsToEmptyDictionary() throws {
         let jsonData = #"{ "stringToInt": null }"#.data(using: .utf8)!
