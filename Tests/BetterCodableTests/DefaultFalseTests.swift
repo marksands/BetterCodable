@@ -11,6 +11,12 @@ class DefaultFalseTests: XCTestCase {
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         XCTAssertEqual(fixture.truthy, false)
     }
+
+    func testDecodingKeyNotPresentDefaultsToFalse() throws {
+        let jsonData = #"{}"#.data(using: .utf8)!
+        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        XCTAssertEqual(fixture.truthy, false)
+    }
     
     func testEncodingDecodedFailableArrayDefaultsToEmptyArray() throws {
         let jsonData = #"{ "truthy": null }"#.data(using: .utf8)!
