@@ -266,8 +266,14 @@ let result = try JSONDecoder().decode(Response.self, from: json)
 
 ## Installation
 
-Swift Package Manager
+### CocoaPods
 
-### Attribution
+```ruby
+pod 'BetterCodable', '~> 0.1.0'
+```
+
+### Swift Package Manager
+
+## Attribution
 
 This project is licensed under MIT. If you find these useful, please tell your boss where you found them.
