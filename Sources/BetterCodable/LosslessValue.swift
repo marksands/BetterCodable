@@ -12,6 +12,11 @@ public struct LosslessValue<T: LosslessStringCodable>: Codable {
     private let type: LosslessStringCodable.Type
     
     public var wrappedValue: T
+
+    public init(wrappedValue: T) {
+        self.wrappedValue = wrappedValue
+        self.type = T.self
+    }
     
     public init(from decoder: Decoder) throws {
         do {
