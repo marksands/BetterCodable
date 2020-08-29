@@ -2,9 +2,11 @@ import Foundation
 
 /// Decodes `String` values of format `y-MM-dd` as a `Date`.
 ///
-/// `@YearMonthDayDate` decodes string values of format `y-MM-dd` as a `Date`. Encoding the `Date` will encode the value back into the original string format.
+/// `@YearMonthDayDate` decodes string values of format `y-MM-dd` as a `Date`. Encoding the `Date` will encode the value
+/// back into the original string format.
 ///
-/// For example, decoding json data with a `String` representation  of `"2001-01-01"` produces a valid `Date` representing January 1st, 2001.
+/// For example, decoding json data with a `String` representation  of `"2001-01-01"` produces a valid `Date` representing
+/// January 1st, 2001.
 public struct YearMonthDayStrategy: DateValueCodableStrategy {
     private static let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()

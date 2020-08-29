@@ -1,6 +1,7 @@
 /// Provides a default value for missing `Decodable` data.
 ///
-/// `DefaultCodableStrategy` provides a generic strategy type that the `DefaultCodable` property wrapper can use to provide a reasonable default value for missing Decodable data.
+/// `DefaultCodableStrategy` provides a generic strategy type that the `DefaultCodable` property wrapper can use to provide
+/// a reasonable default value for missing Decodable data.
 public protocol DefaultCodableStrategy {
     associatedtype RawValue: Codable
     
@@ -9,7 +10,8 @@ public protocol DefaultCodableStrategy {
 
 /// Decodes values with a reasonable default value
 ///
-/// `@Defaultable` attempts to decode a value and falls back to a default type provided by the generic `DefaultCodableStrategy`.
+/// `@Defaultable` attempts to decode a value and falls back to a default type provided by the generic
+/// `DefaultCodableStrategy`.
 @propertyWrapper
 public struct DefaultCodable<Default: DefaultCodableStrategy>: Codable {
     public var wrappedValue: Default.RawValue

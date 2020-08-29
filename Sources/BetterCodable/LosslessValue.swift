@@ -6,7 +6,9 @@ public typealias LosslessStringCodable = LosslessStringConvertible & Codable
 ///
 /// `@LosslessValue` attempts to decode Codable types into their respective preferred types while preserving the data.
 ///
-/// This is useful when data may return unpredictable values when a consumer is expecting a certain type. For instace, if an API sends SKUs as either an `Int` or `String`, then a `@LosslessValue` can ensure the types are always decoded as `String`s.
+/// This is useful when data may return unpredictable values when a consumer is expecting a certain type. For instance,
+/// if an API sends SKUs as either an `Int` or `String`, then a `@LosslessValue` can ensure the types are always decoded
+/// as `String`s.
 @propertyWrapper
 public struct LosslessValue<T: LosslessStringCodable>: Codable {
     private let type: LosslessStringCodable.Type
