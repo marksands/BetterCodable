@@ -8,6 +8,10 @@ class LosslessValueTests: XCTestCase {
         @LosslessValue var int: Int
         @LosslessValue var double: Double
     }
+
+    struct BoolFixture: Equatable, Codable {
+        @LosslessValue var bool: Bool
+    }
     
     func testDecodingMisalignedTypesFromJSONTraversesCorrectType() throws {
         let jsonData = #"{ "bool": "true", "string": 42, "int": "7", "double": "7.1" }"#.data(using: .utf8)!
@@ -42,5 +46,15 @@ class LosslessValueTests: XCTestCase {
         XCTAssertEqual(fixture.string, "42")
         XCTAssertEqual(fixture.int, 7)
         XCTAssertEqual(fixture.double, 7.1)
+    }
+
+    func testDecodingMisalignedBoolIntValueFromJSONTraversesCorrectType() throws {
+        let jsonData = #"{ "bool": 1 }"#.data(using: .utf8)!
+        let fixture = try JSONDecoder().decode(BoolFixture.self, from: jsonData)
+        XCTAssertEqual(fixture.bool, true)
+
+        let jsonData2 = #"{ "bool": 0 }"#.data(using: .utf8)!
+        let fixture2 = try JSONDecoder().decode(BoolFixture.self, from: jsonData2)
+        XCTAssertEqual(fixture2.bool, false)
     }
 }
