@@ -44,7 +44,7 @@ public struct LosslessValue<T: LosslessStringCodable>: Codable {
                 decode(Double.self),
                 decode(Float.self),
                 ]
-            
+
             guard
                 let rawValue = types.lazy.compactMap({ $0(decoder) }).first,
                 let value = T.init("\(rawValue)")
