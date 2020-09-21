@@ -1,5 +1,3 @@
-public protocol BoolCodableStrategy: DefaultCodableStrategy where RawValue == Bool {}
-
 public struct DefaultFalseStrategy: BoolCodableStrategy {
     public static var defaultValue: Bool { return false }
 }

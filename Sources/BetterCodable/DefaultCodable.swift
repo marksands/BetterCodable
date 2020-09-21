@@ -36,6 +36,8 @@ extension DefaultCodable: Equatable where Default.RawValue: Equatable { }
 extension DefaultCodable: Hashable where Default.RawValue: Hashable { }
 
 // MARK: - KeyedDecodingContainer
+public protocol BoolCodableStrategy: DefaultCodableStrategy where RawValue == Bool {}
+
 public extension KeyedDecodingContainer {
 
     /// Default implementation of decoding a DefaultCodable
@@ -56,7 +58,7 @@ public extension KeyedDecodingContainer {
         } catch let error {
             guard let decodingError = error as? DecodingError,
                 case .typeMismatch = decodingError else {
-                    return DefaultCodable(wrappedValue: DefaultFalseStrategy.defaultValue)
+                    return DefaultCodable(wrappedValue: P.defaultValue)
             }
             if let intValue = try? decodeIfPresent(Int.self, forKey: key),
                 let bool = Bool(exactly: NSNumber(value: intValue)) {
@@ -65,7 +67,7 @@ public extension KeyedDecodingContainer {
                 let bool = Bool(stringValue) {
                 return DefaultCodable(wrappedValue: bool)
             } else {
-                return DefaultCodable(wrappedValue: DefaultFalseStrategy.defaultValue)
+                return DefaultCodable(wrappedValue: P.defaultValue)
             }
         }
     }
