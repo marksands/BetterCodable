@@ -1,3 +1,5 @@
+import Foundation
+
 /// Provides a default value for missing `Decodable` data.
 ///
 /// `DefaultCodableStrategy` provides a generic strategy type that the `DefaultCodable` property wrapper can use to provide
@@ -44,6 +46,27 @@ public extension KeyedDecodingContainer {
             return value
         } else {
             return DefaultCodable(wrappedValue: P.defaultValue)
+        }
+    }
+
+    func decode<P: BoolCodableStrategy>(_: DefaultCodable<P>.Type, forKey key: Key) throws -> DefaultCodable<P> {
+        do {
+            let value = try decode(Bool.self, forKey: key)
+            return DefaultCodable(wrappedValue: value)
+        } catch let error {
+            guard let decodingError = error as? DecodingError,
+                case .typeMismatch = decodingError else {
+                    return DefaultCodable(wrappedValue: DefaultFalseStrategy.defaultValue)
+            }
+            if let intValue = try? decodeIfPresent(Int.self, forKey: key),
+                let bool = Bool(exactly: NSNumber(value: intValue)) {
+                return DefaultCodable(wrappedValue: bool)
+            } else if let stringValue = try? decodeIfPresent(String.self, forKey: key),
+                let bool = Bool(stringValue) {
+                return DefaultCodable(wrappedValue: bool)
+            } else {
+                return DefaultCodable(wrappedValue: DefaultFalseStrategy.defaultValue)
+            }
         }
     }
 }
