@@ -4,5 +4,5 @@ public struct DefaultTrueStrategy: BoolCodableStrategy {
 
 /// Decodes Bools defaulting to `true` if applicable
 ///
-/// `@DefaultFalse` decodes Bools and defaults the value to true if the Decoder is unable to decode the value.
+/// `@DefaultTrue` decodes Bools and defaults the value to true if the Decoder is unable to decode the value.
 public typealias DefaultTrue = DefaultCodable<DefaultTrueStrategy>
