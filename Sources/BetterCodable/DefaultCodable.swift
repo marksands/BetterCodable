@@ -51,6 +51,12 @@ public extension KeyedDecodingContainer {
         }
     }
 
+    /// Default implementation of decoding a `DefaultCodable` where its strategy is a `BoolCodableStrategy`.
+    ///
+    /// Tries to initially Decode a `Bool` if available, otherwise tries to decode it as an `Int` or `String`
+    /// when there is a `typeMismatch` decoding error. This preserves the actual value of the `Bool` in which
+    /// the data provider might be sending the value as different types. If everything fails defaults to
+    /// the `defaultValue` provided by the strategy.
     func decode<P: BoolCodableStrategy>(_: DefaultCodable<P>.Type, forKey key: Key) throws -> DefaultCodable<P> {
         do {
             let value = try decode(Bool.self, forKey: key)
