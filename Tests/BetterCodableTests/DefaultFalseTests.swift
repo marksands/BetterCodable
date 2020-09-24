@@ -57,4 +57,14 @@ class DefaultFalseTests: XCTestCase {
         let fixture2 = try JSONDecoder().decode(Fixture.self, from: jsonData2)
         XCTAssertEqual(fixture2.truthy, false)
     }
+
+    func testDecodingInvalidValueDecodesToDefaultValue() throws {
+        let jsonData = #"{ "truthy": "invalidValue" }"#.data(using: .utf8)!
+        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        XCTAssertEqual(
+            fixture.truthy,
+            false,
+            "Should fall in to the else block and return default value"
+        )
+    }
 }
