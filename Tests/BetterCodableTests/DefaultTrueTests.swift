@@ -46,13 +46,25 @@ class DefaultTrueTests: XCTestCase {
         let jsonData2 = #"{ "truthy": 0 }"#.data(using: .utf8)!
         let fixture2 = try JSONDecoder().decode(Fixture.self, from: jsonData2)
         XCTAssertEqual(fixture2.truthy, false)
+    }
 
-        let jsonData3 = #"{ "truthy": "invalidValue" }"#.data(using: .utf8)!
-        let fixture3 = try JSONDecoder().decode(Fixture.self, from: jsonData3)
+    func testDecodingInvalidValueDecodesToDefaultValue() throws {
+        let jsonData = #"{ "truthy": "invalidValue" }"#.data(using: .utf8)!
+        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         XCTAssertEqual(
-            fixture3.truthy,
+            fixture.truthy,
             true,
             "Should fall in to the else block and return default value"
         )
+    }
+
+    func testDecodingMisalignedBoolStringValueFromJSONTraversesCorrectType() throws {
+        let jsonData = #"{ "truthy": "true" }"#.data(using: .utf8)!
+        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        XCTAssertEqual(fixture.truthy, true)
+
+        let jsonData2 = #"{ "truthy": "false" }"#.data(using: .utf8)!
+        let fixture2 = try JSONDecoder().decode(Fixture.self, from: jsonData2)
+        XCTAssertEqual(fixture2.truthy, false)
     }
 }
