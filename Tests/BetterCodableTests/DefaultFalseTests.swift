@@ -47,4 +47,14 @@ class DefaultFalseTests: XCTestCase {
         let fixture2 = try JSONDecoder().decode(Fixture.self, from: jsonData2)
         XCTAssertEqual(fixture2.truthy, false)
     }
+
+    func testDecodingMisalignedBoolStringValueFromJSONTraversesCorrectType() throws {
+        let jsonData = #"{ "truthy": "true" }"#.data(using: .utf8)!
+        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        XCTAssertEqual(fixture.truthy, true)
+
+        let jsonData2 = #"{ "truthy": "false" }"#.data(using: .utf8)!
+        let fixture2 = try JSONDecoder().decode(Fixture.self, from: jsonData2)
+        XCTAssertEqual(fixture2.truthy, false)
+    }
 }
