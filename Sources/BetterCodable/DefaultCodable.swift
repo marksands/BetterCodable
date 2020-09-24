@@ -66,8 +66,6 @@ public extension KeyedDecodingContainer {
                 case .typeMismatch = decodingError else {
                     return DefaultCodable(wrappedValue: P.defaultValue)
             }
-            // Not sure if it is worth adding the Double, Float, and other cases.
-            // In reality backend should never return double, or floating point values for bools but hey we are here for a reason 🤷🏻‍♂️
             if let intValue = try? decodeIfPresent(Int.self, forKey: key),
                 let bool = Bool(exactly: NSNumber(value: intValue)) {
                 return DefaultCodable(wrappedValue: bool)
