@@ -10,11 +10,11 @@ class LosslessValueTests: XCTestCase {
     }
 
     func testDecodingMisalignedTypesFromJSONTraversesCorrectType() throws {
-        let jsonData = #"{ "bool": "true", "string": 42, "int": "7", "double": "7.1" }"#.data(using: .utf8)!
+        let jsonData = #"{ "bool": "true", "string": 42, "int": "1", "double": "7.1" }"#.data(using: .utf8)!
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         XCTAssertEqual(fixture.bool, true)
         XCTAssertEqual(fixture.string, "42")
-        XCTAssertEqual(fixture.int, 7)
+        XCTAssertEqual(fixture.int, 1)
         XCTAssertEqual(fixture.double, 7.1)
     }
     
