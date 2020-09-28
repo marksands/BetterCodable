@@ -1,40 +1,40 @@
 import XCTest
-import BetterCodable
+@testable import BetterCodable
 
-class DefaultFalseTests: XCTestCase {
+class DefaultTrueTests: XCTestCase {
     struct Fixture: Equatable, Codable {
-        @DefaultFalse var truthy: Bool
+        @DefaultTrue var truthy: Bool
     }
-    
+
     func testDecodingFailableArrayDefaultsToFalse() throws {
         let jsonData = #"{ "truthy": null }"#.data(using: .utf8)!
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-        XCTAssertEqual(fixture.truthy, false)
+        XCTAssertEqual(fixture.truthy, true)
     }
 
     func testDecodingKeyNotPresentDefaultsToFalse() throws {
         let jsonData = #"{}"#.data(using: .utf8)!
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-        XCTAssertEqual(fixture.truthy, false)
+        XCTAssertEqual(fixture.truthy, true)
     }
-    
+
     func testEncodingDecodedFailableArrayDefaultsToFalse() throws {
         let jsonData = #"{ "truthy": null }"#.data(using: .utf8)!
         var _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-        
-        _fixture.truthy = true
-        
+
+        _fixture.truthy = false
+
         let fixtureData = try JSONEncoder().encode(_fixture)
         let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
-        XCTAssertEqual(fixture.truthy, true)
+        XCTAssertEqual(fixture.truthy, false)
     }
-    
+
     func testEncodingDecodedFulfillableBoolRetainsValue() throws {
         let jsonData = #"{ "truthy": true }"#.data(using: .utf8)!
         let _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         let fixtureData = try JSONEncoder().encode(_fixture)
         let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
-        
+
         XCTAssertEqual(fixture.truthy, true)
     }
 
@@ -48,6 +48,16 @@ class DefaultFalseTests: XCTestCase {
         XCTAssertEqual(fixture2.truthy, false)
     }
 
+    func testDecodingInvalidValueDecodesToDefaultValue() throws {
+        let jsonData = #"{ "truthy": "invalidValue" }"#.data(using: .utf8)!
+        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        XCTAssertEqual(
+            fixture.truthy,
+            true,
+            "Should fall in to the else block and return default value"
+        )
+    }
+
     func testDecodingMisalignedBoolStringValueDecodesCorrectBoolValue() throws {
         let jsonData = #"{ "truthy": "true" }"#.data(using: .utf8)!
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
@@ -56,15 +66,5 @@ class DefaultFalseTests: XCTestCase {
         let jsonData2 = #"{ "truthy": "false" }"#.data(using: .utf8)!
         let fixture2 = try JSONDecoder().decode(Fixture.self, from: jsonData2)
         XCTAssertEqual(fixture2.truthy, false)
-    }
-
-    func testDecodingInvalidValueDecodesToDefaultValue() throws {
-        let jsonData = #"{ "truthy": "invalidValue" }"#.data(using: .utf8)!
-        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-        XCTAssertEqual(
-            fixture.truthy,
-            false,
-            "Should fall in to the else block and return default value"
-        )
     }
 }

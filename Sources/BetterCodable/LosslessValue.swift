@@ -29,9 +29,14 @@ public struct LosslessValue<T: LosslessStringCodable>: Codable {
             func decode<T: LosslessStringCodable>(_: T.Type) -> (Decoder) -> LosslessStringCodable? {
                 return { try? T.init(from: $0) }
             }
+
+            func decodeBoolFromNSNumber() -> (Decoder) -> LosslessStringCodable? {
+                return { (try? Int.init(from: $0)).flatMap { Bool(exactly: NSNumber(value: $0)) } }
+            }
             
             let types: [(Decoder) -> LosslessStringCodable?] = [
                 decode(String.self),
+                decodeBoolFromNSNumber(),
                 decode(Bool.self),
                 decode(Int.self),
                 decode(Int8.self),
@@ -43,8 +48,8 @@ public struct LosslessValue<T: LosslessStringCodable>: Codable {
                 decode(UInt64.self),
                 decode(Double.self),
                 decode(Float.self),
-                ]
-            
+            ]
+
             guard
                 let rawValue = types.lazy.compactMap({ $0(decoder) }).first,
                 let value = T.init("\(rawValue)")
