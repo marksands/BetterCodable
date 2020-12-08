@@ -40,4 +40,14 @@ class DefaultNilTests: XCTestCase {
         XCTAssertNotNil(fixture.url)
         XCTAssertEqual(url, fixture.url)
     }
+    
+    func testDecodingNullUrl() throws {
+        struct Fixture: Codable {
+            @DefaultNil var url: URL?
+        }
+        let jsonData = #"{"url":null}"#.data(using: .utf8)!
+        
+        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        XCTAssertNil(fixture.url)
+    }
 }
