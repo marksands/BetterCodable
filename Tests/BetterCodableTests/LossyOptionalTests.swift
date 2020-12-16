@@ -2,22 +2,23 @@ import XCTest
 import BetterCodable
 
 class DefaultNilTests: XCTestCase {
-    /// This test demonstrates the problem that `@DefaultNil` solves. When decoding
+    /// This test demonstrates the problem that `@LossyOptional` solves. When decoding
     /// optional types, it often the case that we end up with an error instead of
     /// defaulting back to `nil`.
     func testDecodingBadUrlAsOptionalWithoutDefaultNil() {
         struct Fixture: Codable {
-            var url: URL?
+            var a: URL?
         }
-        let jsonData = #"{"url":""}"#.data(using: .utf8)!
+        
+        let jsonData = #"{"a":"https://website .test"}"#.data(using: .utf8)!
         
         XCTAssertThrowsError(try JSONDecoder().decode(Fixture.self, from: jsonData))
     }
     
     func testDecodingWithUrlConversions() throws {
         struct Fixture: Codable {
-            @DefaultNil var a: URL?
-            @DefaultNil var b: URL?
+            @LossyOptional var a: URL?
+            @LossyOptional var b: URL?
         }
         
         let badUrlString = "https://website .test"
@@ -32,8 +33,8 @@ class DefaultNilTests: XCTestCase {
     
     func testDecodingWithIntegerConversions() throws {
         struct Fixture: Codable {
-            @DefaultNil var a: Int?
-            @DefaultNil var b: Int?
+            @LossyOptional var a: Int?
+            @LossyOptional var b: Int?
         }
         
         let jsonData = #"{ "a": 3.14, "b": 3 }"#.data(using: .utf8)!
@@ -45,7 +46,7 @@ class DefaultNilTests: XCTestCase {
     
     func testDecodingWithNullValue() throws {
         struct Fixture: Codable {
-            @DefaultNil var a: String?
+            @LossyOptional var a: String?
         }
         
         let jsonData = #"{"a":null}"#.data(using: .utf8)!
@@ -56,7 +57,7 @@ class DefaultNilTests: XCTestCase {
     
     func testDecodingWithMissingKey() throws {
         struct Fixture: Codable {
-            @DefaultNil var a: String?
+            @LossyOptional var a: String?
         }
         
         let jsonData = "{}".data(using: .utf8)!
