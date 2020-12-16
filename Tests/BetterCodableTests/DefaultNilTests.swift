@@ -14,50 +14,54 @@ class DefaultNilTests: XCTestCase {
         XCTAssertThrowsError(try JSONDecoder().decode(Fixture.self, from: jsonData))
     }
     
-    func testDecodingBadUrlAsOptionalWithDefaultNil() throws {
+    func testDecodingWithUrlConversions() throws {
         struct Fixture: Codable {
-            @DefaultNil var url: URL?
+            @DefaultNil var a: URL?
+            @DefaultNil var b: URL?
         }
-        let jsonData = #"{"url":""}"#.data(using: .utf8)!
         
+        let badUrlString = "https://website .test"
+        let goodUrlString = "https://website.test"
+        
+        let jsonData = #"{"a":"\#(badUrlString)", "b":"\#(goodUrlString)"}"#.data(using: .utf8)!
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-        XCTAssertNil(fixture.url)
+        
+        XCTAssertNil(fixture.a)
+        XCTAssertEqual(fixture.b, URL(string: goodUrlString))
     }
     
-    func testDecodingGoodUrl() throws {
+    func testDecodingWithIntegerConversions() throws {
         struct Fixture: Codable {
-            @DefaultNil var url: URL?
+            @DefaultNil var a: Int?
+            @DefaultNil var b: Int?
         }
-        let urlString = "https://github.com/marksands/BetterCodable"
         
-        let jsonData = #"{"url":"\#(urlString)"}"#
-            .data(using: .utf8)!
-        
+        let jsonData = #"{ "a": 3.14, "b": 3 }"#.data(using: .utf8)!
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-        let url = URL(string: urlString)
         
-        XCTAssertNotNil(url)
-        XCTAssertNotNil(fixture.url)
-        XCTAssertEqual(url, fixture.url)
+        XCTAssertNil(fixture.a)
+        XCTAssertEqual(fixture.b, 3)
     }
     
-    func testDecodingNullUrl() throws {
+    func testDecodingWithNullValue() throws {
         struct Fixture: Codable {
-            @DefaultNil var url: URL?
+            @DefaultNil var a: String?
         }
-        let jsonData = #"{"url":null}"#.data(using: .utf8)!
         
+        let jsonData = #"{"a":null}"#.data(using: .utf8)!
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-        XCTAssertNil(fixture.url)
+        
+        XCTAssertNil(fixture.a)
     }
     
     func testDecodingWithMissingKey() throws {
         struct Fixture: Codable {
-            @DefaultNil var url: URL?
+            @DefaultNil var a: String?
         }
-        let jsonData = "{}".data(using: .utf8)!
         
+        let jsonData = "{}".data(using: .utf8)!
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-        XCTAssertNil(fixture.url)
+        
+        XCTAssertNil(fixture.a)
     }
 }
