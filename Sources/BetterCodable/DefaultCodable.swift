@@ -5,9 +5,9 @@ import Foundation
 /// `DefaultCodableStrategy` provides a generic strategy type that the `DefaultCodable` property wrapper can use to provide
 /// a reasonable default value for missing Decodable data.
 public protocol DefaultCodableStrategy {
-    associatedtype RawValue: Codable
+    associatedtype DefaultValue: Codable
     
-    static var defaultValue: RawValue { get }
+    static var defaultValue: DefaultValue { get }
 }
 
 /// Decodes values with a reasonable default value
@@ -16,15 +16,15 @@ public protocol DefaultCodableStrategy {
 /// `DefaultCodableStrategy`.
 @propertyWrapper
 public struct DefaultCodable<Default: DefaultCodableStrategy>: Codable {
-    public var wrappedValue: Default.RawValue
+    public var wrappedValue: Default.DefaultValue
     
-    public init(wrappedValue: Default.RawValue) {
+    public init(wrappedValue: Default.DefaultValue) {
         self.wrappedValue = wrappedValue
     }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        self.wrappedValue = (try? container.decode(Default.RawValue.self)) ?? Default.defaultValue
+        self.wrappedValue = (try? container.decode(Default.DefaultValue.self)) ?? Default.defaultValue
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -32,11 +32,11 @@ public struct DefaultCodable<Default: DefaultCodableStrategy>: Codable {
     }
 }
 
-extension DefaultCodable: Equatable where Default.RawValue: Equatable { }
-extension DefaultCodable: Hashable where Default.RawValue: Hashable { }
+extension DefaultCodable: Equatable where Default.DefaultValue: Equatable { }
+extension DefaultCodable: Hashable where Default.DefaultValue: Hashable { }
 
 // MARK: - KeyedDecodingContainer
-public protocol BoolCodableStrategy: DefaultCodableStrategy where RawValue == Bool {}
+public protocol BoolCodableStrategy: DefaultCodableStrategy where DefaultValue == Bool {}
 
 public extension KeyedDecodingContainer {
 
