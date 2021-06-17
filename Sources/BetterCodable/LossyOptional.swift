@@ -1,4 +1,4 @@
-public struct DefaultNilStrategy<T: Codable>: DefaultCodableStrategy {
+public struct DefaultNilStrategy<T: Decodable>: DefaultCodableStrategy {
     public static var defaultValue: T? { nil }
 }
 

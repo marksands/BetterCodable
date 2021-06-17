@@ -5,7 +5,7 @@ import Foundation
 /// `DefaultCodableStrategy` provides a generic strategy type that the `DefaultCodable` property wrapper can use to provide
 /// a reasonable default value for missing Decodable data.
 public protocol DefaultCodableStrategy {
-    associatedtype DefaultValue: Codable
+    associatedtype DefaultValue: Decodable
     
     static var defaultValue: DefaultValue { get }
 }
