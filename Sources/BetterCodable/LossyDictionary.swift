@@ -5,31 +5,6 @@
 /// This is useful if the Dictionary is intended to contain non-optional values.
 @propertyWrapper
 public struct LossyDictionary<Key: Hashable, Value> {
-    struct DictionaryCodingKey: CodingKey {
-        let stringValue: String
-        let intValue: Int?
-        
-        init?(stringValue: String) {
-            self.stringValue = stringValue
-            self.intValue = Int(stringValue)
-        }
-        
-        init?(intValue: Int) {
-            self.stringValue = "\(intValue)"
-            self.intValue = intValue
-        }
-    }
-    
-    private struct AnyDecodableValue: Decodable {}
-    private struct LossyDecodableValue<Value: Decodable>: Decodable {
-        let value: Value
-        
-        public init(from decoder: Decoder) throws {
-            let container = try decoder.singleValueContainer()
-            value = try container.decode(Value.self)
-        }
-    }
-    
     public var wrappedValue: [Key: Value]
     
     public init(wrappedValue: [Key: Value]) {
@@ -38,6 +13,30 @@ public struct LossyDictionary<Key: Hashable, Value> {
 }
 
 extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
+    struct DictionaryCodingKey: CodingKey {
+        let stringValue: String
+        let intValue: Int?
+
+        init?(stringValue: String) {
+            self.stringValue = stringValue
+            self.intValue = Int(stringValue)
+        }
+
+        init?(intValue: Int) {
+            self.stringValue = "\(intValue)"
+            self.intValue = intValue
+        }
+    }
+
+    private struct AnyDecodableValue: Decodable {}
+    private struct LossyDecodableValue<Value: Decodable>: Decodable {
+        let value: Value
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            value = try container.decode(Value.self)
+        }
+    }
 
     public init(from decoder: Decoder) throws {
         var elements: [Key: Value] = [:]

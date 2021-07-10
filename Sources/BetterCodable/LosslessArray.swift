@@ -6,34 +6,38 @@
 /// if an API sends an array of SKUs as either `Int`s or `String`s, then a `@LosslessArray` can ensure the elements are
 /// always decoded as `String`s.
 @propertyWrapper
-public struct LosslessArray<T: LosslessStringCodable>: Codable {
-  private struct AnyDecodableValue: Codable {}
+public struct LosslessArray<T: LosslessStringCodable> {
+    public var wrappedValue: [T]
 
-  public var wrappedValue: [T]
-
-  public init(wrappedValue: [T]) {
-    self.wrappedValue = wrappedValue
-  }
-
-  public init(from decoder: Decoder) throws {
-    var container = try decoder.unkeyedContainer()
-
-    var elements: [T] = []
-    while !container.isAtEnd {
-      do {
-        let value = try container.decode(LosslessValue<T>.self).wrappedValue
-        elements.append(value)
-      } catch {
-        _ = try? container.decode(AnyDecodableValue.self)
-      }
+    public init(wrappedValue: [T]) {
+        self.wrappedValue = wrappedValue
     }
+}
 
-    self.wrappedValue = elements
-  }
+extension LosslessArray: Decodable where T: Decodable {
+    private struct AnyDecodableValue: Decodable {}
 
-  public func encode(to encoder: Encoder) throws {
-    try wrappedValue.encode(to: encoder)
-  }
+    public init(from decoder: Decoder) throws {
+        var container = try decoder.unkeyedContainer()
+
+        var elements: [T] = []
+        while !container.isAtEnd {
+            do {
+                let value = try container.decode(LosslessValue<T>.self).wrappedValue
+                elements.append(value)
+            } catch {
+                _ = try? container.decode(AnyDecodableValue.self)
+            }
+        }
+
+        self.wrappedValue = elements
+    }
+}
+
+extension LosslessArray: Encodable where T: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        try wrappedValue.encode(to: encoder)
+    }
 }
 
 extension LosslessArray: Equatable where T: Equatable {}

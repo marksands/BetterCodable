@@ -2,7 +2,7 @@ public struct DefaultEmptyDictionaryStrategy<Key: Decodable & Hashable, Value: D
     public static var defaultValue: [Key: Value] { return [:] }
 }
 
-/// Decodes Dictionaries returning an empty dictionary instead of nil if appicable
+/// Decodes Dictionaries returning an empty dictionary instead of nil if applicable
 ///
 /// `@DefaultEmptyDictionary` decodes Dictionaries and returns an empty dictionary instead of nil if the Decoder is unable
 /// to decode the container.

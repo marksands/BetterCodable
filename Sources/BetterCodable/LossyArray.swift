@@ -5,16 +5,15 @@
 /// This is useful if the Array is intended to contain non-optional types.
 @propertyWrapper
 public struct LossyArray<T> {
-  private struct AnyDecodableValue: Codable {}
-	
-  public var wrappedValue: [T]
+    public var wrappedValue: [T]
 
-  public init(wrappedValue: [T]) {
-    self.wrappedValue = wrappedValue
-  }
+    public init(wrappedValue: [T]) {
+        self.wrappedValue = wrappedValue
+    }
 }
 
 extension LossyArray: Decodable where T: Decodable {
+    private struct AnyDecodableValue: Decodable {}
 
     public init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
@@ -34,7 +33,6 @@ extension LossyArray: Decodable where T: Decodable {
 }
 
 extension LossyArray: Encodable where T: Encodable {
-
     public func encode(to encoder: Encoder) throws {
         try wrappedValue.encode(to: encoder)
     }

@@ -10,7 +10,7 @@ class DefaultNilTests: XCTestCase {
             var a: URL?
         }
         
-        let jsonData = #"{"a":"https://website .test"}"#.data(using: .utf8)!
+        let jsonData = #"{"a":"https://example .com"}"#.data(using: .utf8)!
         
         XCTAssertThrowsError(try JSONDecoder().decode(Fixture.self, from: jsonData))
     }
@@ -21,8 +21,8 @@ class DefaultNilTests: XCTestCase {
             @LossyOptional var b: URL?
         }
         
-        let badUrlString = "https://website .test"
-        let goodUrlString = "https://website.test"
+        let badUrlString = "https://example .com"
+        let goodUrlString = "https://example.com"
         
         let jsonData = #"{"a":"\#(badUrlString)", "b":"\#(goodUrlString)"}"#.data(using: .utf8)!
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
@@ -38,8 +38,10 @@ class DefaultNilTests: XCTestCase {
         }
         
         let jsonData = #"{ "a": 3.14, "b": 3 }"#.data(using: .utf8)!
-        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-        
+        let _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        let fixtureData = try JSONEncoder().encode(_fixture)
+        let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
+
         XCTAssertNil(fixture.a)
         XCTAssertEqual(fixture.b, 3)
     }
@@ -61,8 +63,10 @@ class DefaultNilTests: XCTestCase {
         }
         
         let jsonData = "{}".data(using: .utf8)!
-        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
-        
+        let _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        let fixtureData = try JSONEncoder().encode(_fixture)
+        let fixture = try JSONDecoder().decode(Fixture.self, from: fixtureData)
+
         XCTAssertNil(fixture.a)
     }
 }
