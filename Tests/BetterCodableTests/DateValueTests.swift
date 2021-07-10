@@ -11,7 +11,25 @@ class CustomDateCodableValueTests: XCTestCase {
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         XCTAssertEqual(fixture.iso8601, Date(timeIntervalSince1970: 851042397))
     }
-    
+
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *)
+    func testDecodingAndEncodingISO8601DateStringWithFractionalSeconds() throws {
+        struct Fixture: Codable {
+            @DateValue<ISO8601WithFractionalSecondsStrategy> var iso8601: Date
+            @DateValue<ISO8601WithFractionalSecondsStrategy> var iso8601Short: Date
+        }
+        let jsonData = """
+        {
+          "iso8601": "1996-12-19T16:39:57.123456Z",
+          "iso8601Short": "1996-12-19T16:39:57.000Z-08:00"
+        }
+        """.data(using: .utf8)!
+
+        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        XCTAssertEqual(fixture.iso8601Short, Date(timeIntervalSince1970: 851013597.0))
+        XCTAssertEqual(fixture.iso8601, Date(timeIntervalSince1970: 851013597.123))
+    }
+
     func testDecodingAndEncodingRFC3339DateString() throws {
          struct Fixture: Codable {
             @DateValue<RFC3339Strategy> var rfc3339Date: Date
