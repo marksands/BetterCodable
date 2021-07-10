@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 	s.name         = 'BetterCodable'
-	s.version      = '0.1.0'
+	s.version      = '0.4.0'
 	s.swift_versions = ['5.1']
 	s.summary      = 'Better Codable through Property Wrappers'
 	s.homepage     = 'https://github.com/marksands/BetterCodable'
