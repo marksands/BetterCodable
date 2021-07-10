@@ -6,7 +6,8 @@ import Foundation
 /// a reasonable default value for missing Decodable data.
 public protocol DefaultCodableStrategy {
     associatedtype DefaultValue: Codable
-    
+
+    /// The fallback value used when decoding fails
     static var defaultValue: DefaultValue { get }
 }
 

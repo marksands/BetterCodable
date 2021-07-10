@@ -2,13 +2,14 @@ import Foundation
 
 public typealias LosslessStringCodable = LosslessStringConvertible & Codable
 
-/// Provides an ordered list of types for decoding the lossless value, prioritizing the first type that successfully decodes as the produced value.
+/// Provides an ordered list of types for decoding the lossless value, prioritizing the first type that successfully decodes as the inferred type.
 ///
-/// `LosslessDecodingStrategy` provides a generic strategy type that the `LosslessValueCodable` property wrapper can use to provide
-/// the ordered list of decodable types in order to maximize preservation and robustness for the otherwise lossy data.
+/// `LosslessDecodingStrategy` provides a generic strategy that the `LosslessValueCodable` property wrapper can use to provide
+/// the ordered list of decodable types in order to maximize preservation for the inferred type.
 public protocol LosslessDecodingStrategy {
     associatedtype Value: LosslessStringCodable
 
+    /// An ordered list of decodable scenarios used to infer the encoded type
     static var losslessDecodableTypes: [(Decoder) -> LosslessStringCodable?] { get }
 }
 
@@ -69,6 +70,7 @@ extension LosslessValueCodable: Hashable where Strategy.Value: Hashable {
 
 public struct LosslessDefaultStrategy<Value: LosslessStringCodable>: LosslessDecodingStrategy {
     public static var losslessDecodableTypes: [(Decoder) -> LosslessStringCodable?] {
+        @inline(__always)
         func decode<T: LosslessStringCodable>(_: T.Type) -> (Decoder) -> LosslessStringCodable? {
             return { try? T.init(from: $0) }
         }
@@ -92,10 +94,12 @@ public struct LosslessDefaultStrategy<Value: LosslessStringCodable>: LosslessDec
 
 public struct LosslessBooleanStrategy<Value: LosslessStringCodable>: LosslessDecodingStrategy {
     public static var losslessDecodableTypes: [(Decoder) -> LosslessStringCodable?] {
+        @inline(__always)
         func decode<T: LosslessStringCodable>(_: T.Type) -> (Decoder) -> LosslessStringCodable? {
             return { try? T.init(from: $0) }
         }
 
+        @inline(__always)
         func decodeBoolFromNSNumber() -> (Decoder) -> LosslessStringCodable? {
             return { (try? Int.init(from: $0)).flatMap { Bool(exactly: NSNumber(value: $0)) } }
         }
@@ -125,6 +129,18 @@ public struct LosslessBooleanStrategy<Value: LosslessStringCodable>: LosslessDec
 /// This is useful when data may return unpredictable values when a consumer is expecting a certain type. For instance,
 /// if an API sends SKUs as either an `Int` or `String`, then a `@LosslessValue` can ensure the types are always decoded
 /// as `String`s.
+///
+/// ```
+/// struct Product: Codable {
+///   @LosslessValue var sku: String
+///   @LosslessValue var id: String
+/// }
+///
+/// // json: { "sku": 87, "id": 123 }
+/// let value = try JSONDecoder().decode(Product.self, from: json)
+/// // value.sku == "87"
+/// // value.id == "123"
+/// ```
 public typealias LosslessValue<T> = LosslessValueCodable<LosslessDefaultStrategy<T>> where T: LosslessStringCodable
 
 /// Decodes Codable values into their respective preferred types.
@@ -132,8 +148,20 @@ public typealias LosslessValue<T> = LosslessValueCodable<LosslessDefaultStrategy
 /// `@LosslessBoolValue` attempts to decode Codable types into their respective preferred types while preserving the data.
 ///
 /// - Note:
+///  This uses a `LosslessBooleanStrategy` in order to prioritize boolean values, and as such, some integer values will be lossy.
 ///
-///  This differs from `@LosslessValue` in that it strongly prefers to keep the boolean value above all else, and some integer values will be lossy. For instance,
-///  if you decode `{ "some_type": 1 }` then `some_type` will be `true` and not `1`. If you do not want this behavior then stick with `@LosslessValue` or create
-///  your own custom `LosslessDecodingStrategy` type.
+///  For instance, if you decode `{ "some_type": 1 }` then `some_type` will be `true` and not `1`. If you do not want this
+///  behavior then use `@LosslessValue` or create a custom `LosslessDecodingStrategy`.
+///
+/// ```
+/// struct Example: Codable {
+///   @LosslessBoolValue var foo: Bool
+///   @LosslessValue var bar: Int
+/// }
+///
+/// // json: { "foo": 1, "bar": 2 }
+/// let value = try JSONDecoder().decode(Fixture.self, from: json)
+/// // value.foo == true
+/// // value.bar == 2
+/// ```
 public typealias LosslessBoolValue<T> = LosslessValueCodable<LosslessBooleanStrategy<T>> where T: LosslessStringCodable
