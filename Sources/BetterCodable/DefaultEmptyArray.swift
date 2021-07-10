@@ -1,4 +1,4 @@
-public struct DefaultEmptyArrayStrategy<T: Codable>: DefaultCodableStrategy {
+public struct DefaultEmptyArrayStrategy<T: Decodable>: DefaultCodableStrategy {
     public static var defaultValue: [T] { return [] }
 }
 
@@ -6,4 +6,4 @@ public struct DefaultEmptyArrayStrategy<T: Codable>: DefaultCodableStrategy {
 ///
 /// `@DefaultEmptyArray` decodes Arrays and returns an empty array instead of nil if the Decoder is unable to decode the
 /// container.
-public typealias DefaultEmptyArray<T> = DefaultCodable<DefaultEmptyArrayStrategy<T>> where T: Codable
+public typealias DefaultEmptyArray<T> = DefaultCodable<DefaultEmptyArrayStrategy<T>> where T: Decodable

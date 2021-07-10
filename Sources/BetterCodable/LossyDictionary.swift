@@ -4,7 +4,7 @@
 ///
 /// This is useful if the Dictionary is intended to contain non-optional values.
 @propertyWrapper
-public struct LossyDictionary<Key: Codable & Hashable, Value: Codable>: Codable {
+public struct LossyDictionary<Key: Hashable, Value> {
     struct DictionaryCodingKey: CodingKey {
         let stringValue: String
         let intValue: Int?
@@ -20,8 +20,8 @@ public struct LossyDictionary<Key: Codable & Hashable, Value: Codable>: Codable 
         }
     }
     
-    private struct AnyDecodableValue: Codable {}
-    private struct LossyDecodableValue<Value: Codable>: Codable {
+    private struct AnyDecodableValue: Decodable {}
+    private struct LossyDecodableValue<Value: Decodable>: Decodable {
         let value: Value
         
         public init(from decoder: Decoder) throws {
@@ -35,12 +35,15 @@ public struct LossyDictionary<Key: Codable & Hashable, Value: Codable>: Codable 
     public init(wrappedValue: [Key: Value]) {
         self.wrappedValue = wrappedValue
     }
-    
+}
+
+extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
+
     public init(from decoder: Decoder) throws {
         var elements: [Key: Value] = [:]
         if Key.self == String.self {
             let container = try decoder.container(keyedBy: DictionaryCodingKey.self)
-            
+
             for key in container.allKeys {
                 do {
                     let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
@@ -51,7 +54,7 @@ public struct LossyDictionary<Key: Codable & Hashable, Value: Codable>: Codable 
             }
         } else if Key.self == Int.self {
             let container = try decoder.container(keyedBy: DictionaryCodingKey.self)
-            
+
             for key in container.allKeys {
                 guard key.intValue != nil else {
                     var codingPath = decoder.codingPath
@@ -62,7 +65,7 @@ public struct LossyDictionary<Key: Codable & Hashable, Value: Codable>: Codable 
                             codingPath: codingPath,
                             debugDescription: "Expected Int key but found String key instead."))
                 }
-                
+
                 do {
                     let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
                     elements[key.intValue! as! Key] = value
@@ -76,10 +79,12 @@ public struct LossyDictionary<Key: Codable & Hashable, Value: Codable>: Codable 
                     codingPath: decoder.codingPath,
                     debugDescription: "Unable to decode key type."))
         }
-        
+
         self.wrappedValue = elements
     }
-    
+}
+
+extension LossyDictionary: Encodable where Key: Encodable, Value: Encodable {
     public func encode(to encoder: Encoder) throws {
         try wrappedValue.encode(to: encoder)
     }

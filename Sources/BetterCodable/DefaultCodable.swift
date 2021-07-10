@@ -5,7 +5,7 @@ import Foundation
 /// `DefaultCodableStrategy` provides a generic strategy type that the `DefaultCodable` property wrapper can use to provide
 /// a reasonable default value for missing Decodable data.
 public protocol DefaultCodableStrategy {
-    associatedtype DefaultValue: Codable
+    associatedtype DefaultValue: Decodable
     
     static var defaultValue: DefaultValue { get }
 }
@@ -15,18 +15,24 @@ public protocol DefaultCodableStrategy {
 /// `@Defaultable` attempts to decode a value and falls back to a default type provided by the generic
 /// `DefaultCodableStrategy`.
 @propertyWrapper
-public struct DefaultCodable<Default: DefaultCodableStrategy>: Codable {
+public struct DefaultCodable<Default: DefaultCodableStrategy> {
     public var wrappedValue: Default.DefaultValue
     
     public init(wrappedValue: Default.DefaultValue) {
         self.wrappedValue = wrappedValue
     }
-    
+}
+
+extension DefaultCodable: Decodable where Default.DefaultValue: Decodable {
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.wrappedValue = (try? container.decode(Default.DefaultValue.self)) ?? Default.defaultValue
     }
-    
+}
+
+extension DefaultCodable: Encodable where Default.DefaultValue: Encodable {
+
     public func encode(to encoder: Encoder) throws {
         try wrappedValue.encode(to: encoder)
     }
