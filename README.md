@@ -174,6 +174,24 @@ let result = try JSONDecoder().decode(Response.self, from: json)
 print(result) // Response(sku: "12355", isAvailable: true)
 ```
 
+## @OptionalLosslessValue
+
+Like LosslessValue, but for optional values. `@OptionalLosslessValue` allows parsing values that may be absent or malformed, producing a nil value instead of thowing an exception. If BetterCodable can make sense of the value, `@OptionalLosslessValue` will attempt to decode a value into the type that you expect, preserving the data that would otherwise throw an exception or be lost altogether. 
+
+### Usage
+
+```Swift
+struct Response: Codable {
+    @OptionalLosslessValue var sku: String?
+    @OptionalLosslessValue var isAvailable: Bool?
+}
+
+let json = #"{ "sku": 12345 }"#.data(using: .utf8)!
+let result = try JSONDecoder().decode(Response.self, from: json)
+
+print(result) // Response(sku: "12355", isAvailable: nil)
+```
+
 ## Date Wrappers
 
 One common frustration with `Codable` is decoding entities that have mixed date formats. `JSONDecoder` comes built in with a handy `dateDecodingStrategy` property, but that uses the same date format for all dates that it will decode. And often, `JSONDecoder` lives elsewhere from the entity forcing tight coupling with the entities if you choose to use its date decoding strategy.
