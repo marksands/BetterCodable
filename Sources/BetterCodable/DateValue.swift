@@ -37,3 +37,15 @@ extension DateValue: Encodable where Formatter.RawValue: Encodable {
         try value.encode(to: encoder)
     }
 }
+
+extension DateValue: Equatable {
+    public static func == (lhs: DateValue<Formatter>, rhs: DateValue<Formatter>) -> Bool {
+        return lhs.wrappedValue == rhs.wrappedValue
+    }
+}
+
+extension DateValue: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(wrappedValue)
+    }
+}
