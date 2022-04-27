@@ -75,4 +75,27 @@ class LossyDictionaryTests: XCTestCase {
         XCTAssertEqual(fixture.stringToInt, ["one": 1, "two": 2, "three": 3])
         XCTAssertEqual(fixture.intToString, [1: "one", 2: "two", 3: "three"])
     }
+
+    func testEncodingLosslessDictionaryRetainsKeys() throws {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+
+        let fixture = Fixture(
+            stringToInt: [
+                "snake_case.with.dots_99.and_numbers": 1,
+                "dots.and_2.00.1_numbers": 2,
+                "key.1": 3,
+                "normal key": 4,
+                "another_key": 5
+            ],
+            intToString: [:]
+        )
+
+        let reencodedFixture = try decoder.decode(Fixture.self, from: encoder.encode(fixture))
+
+        XCTAssertEqual(reencodedFixture, fixture)
+    }
 }

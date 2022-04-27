@@ -42,11 +42,12 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
         var elements: [Key: Value] = [:]
         if Key.self == String.self {
             let container = try decoder.container(keyedBy: DictionaryCodingKey.self)
+            let keys = try Self.extractKeys(from: decoder, container: container)
 
-            for key in container.allKeys {
+            for (key, stringKey) in keys {
                 do {
                     let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
-                    elements[key.stringValue as! Key] = value
+                    elements[stringKey as! Key] = value
                 } catch {
                     _ = try? container.decode(AnyDecodableValue.self, forKey: key)
                 }
@@ -80,6 +81,21 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
         }
 
         self.wrappedValue = elements
+    }
+
+    private static func extractKeys(
+        from decoder: Decoder,
+        container: KeyedDecodingContainer<DictionaryCodingKey>
+    ) throws -> [(DictionaryCodingKey, String)] {
+        // Decode a dictionary ignoring the values to decode the original keys
+        // without using the `JSONDecoder.KeyDecodingStrategy`.
+        let keys = try decoder.singleValueContainer().decode([String: AnyDecodableValue].self).keys
+
+        return zip(
+            container.allKeys.sorted(by: { $0.stringValue < $1.stringValue }),
+            keys.sorted()
+        )
+        .map { ($0, $1) }
     }
 }
 
