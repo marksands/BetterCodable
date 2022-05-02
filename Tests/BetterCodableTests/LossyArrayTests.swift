@@ -39,7 +39,7 @@ class LossyArrayTests: XCTestCase {
         XCTAssertEqual(fixture.nonPrimitiveValues, [Fixture.NestedFixture(one: "1", two: ["x": ["y"]])])
     }
     
-    func testEncodingDecodedLosslessArrayRetainsContents() throws {
+    func testEncodingDecodedLossyArrayRetainsContents() throws {
         let jsonData = #"{ "values": [1, 2], "nonPrimitiveValues": [{ "one": "one", "two": {"key": ["value"]}}] }"#.data(using: .utf8)!
         let _fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         let fixtureData = try JSONEncoder().encode(_fixture)
@@ -47,5 +47,27 @@ class LossyArrayTests: XCTestCase {
         
         XCTAssertEqual(fixture.values, [1, 2])
         XCTAssertEqual(fixture.nonPrimitiveValues, [Fixture.NestedFixture(one: "one", two: ["key": ["value"]])])
+    }
+    
+    func testEncodingDecodingLossyArrayWorksWithCustomStrategies() throws {
+        struct Fixture: Equatable, Codable {
+            @LossyArray var theValues: [Date]
+        }
+
+        let jsonData = #"{ "the_values": [123, null] }"#.data(using: .utf8)!
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        decoder.dateDecodingStrategy = .secondsSince1970
+        let fixture = try decoder.decode(Fixture.self, from: jsonData)
+
+        XCTAssertEqual(fixture.theValues, [Date(timeIntervalSince1970: 123)])
+        
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        encoder.dateEncodingStrategy = .secondsSince1970
+        let data = try encoder.encode(fixture)
+        let fixture2 = try decoder.decode(Fixture.self, from: data)
+
+        XCTAssertEqual(fixture2.theValues, [Date(timeIntervalSince1970: 123)])
     }
 }

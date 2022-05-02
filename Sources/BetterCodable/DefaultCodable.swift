@@ -33,7 +33,8 @@ extension DefaultCodable: Decodable {
 
 extension DefaultCodable: Encodable where Default.DefaultValue: Encodable {
     public func encode(to encoder: Encoder) throws {
-        try wrappedValue.encode(to: encoder)
+		var container = encoder.singleValueContainer()
+		try container.encode(wrappedValue)
     }
 }
 

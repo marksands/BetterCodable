@@ -69,4 +69,24 @@ class CustomDateCodableValueTests: XCTestCase {
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         XCTAssertEqual(fixture.ymd, Date(timeIntervalSince1970: 850953600))
     }
+    
+    func testDecodingAndEncodingWithCustomStrategies() throws {
+        struct Fixture: Codable {
+            @DateValue<TimestampStrategy> var timeStamp: Date
+        }
+        let jsonData = #"{"time_stamp": 851042397.0}"#.data(using: .utf8)!
+        
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        decoder.dateDecodingStrategy = .iso8601
+        let fixture = try decoder.decode(Fixture.self, from: jsonData)
+        XCTAssertEqual(fixture.timeStamp, Date(timeIntervalSince1970: 851042397))
+        
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        encoder.dateEncodingStrategy = .iso8601
+        let data = try encoder.encode(fixture)
+        let fixture2 = try decoder.decode(Fixture.self, from: data)
+        XCTAssertEqual(fixture2.timeStamp, Date(timeIntervalSince1970: 851042397))
+    }
 }
