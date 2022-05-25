@@ -6,7 +6,7 @@ import Foundation
 /// a reasonable default value for missing Decodable data.
 public protocol DefaultCodableStrategy {
     associatedtype DefaultValue: Decodable
-    
+
     /// The fallback value used when decoding fails
     static var defaultValue: DefaultValue { get }
 }
@@ -18,8 +18,8 @@ public protocol DefaultCodableStrategy {
 @propertyWrapper
 public struct DefaultCodable<Default: DefaultCodableStrategy> {
     public var wrappedValue: Default.DefaultValue
-    
-    public init(wrappedValue: Default.DefaultValue) {
+
+    public init(wrappedValue: Default.DefaultValue = Default.DefaultValue.defaultValue) {
         self.wrappedValue = wrappedValue
     }
 }
