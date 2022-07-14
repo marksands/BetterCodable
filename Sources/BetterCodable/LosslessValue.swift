@@ -68,6 +68,10 @@ extension LosslessValueCodable: Hashable where Strategy.Value: Hashable {
     }
 }
 
+#if canImport(_Concurrency) && compiler(>=5.5.2)
+extension LosslessValueCodable: Sendable where Strategy.Value: Sendable { }
+#endif
+
 public struct LosslessDefaultStrategy<Value: LosslessStringCodable>: LosslessDecodingStrategy {
     public static var losslessDecodableTypes: [(Decoder) -> LosslessStringCodable?] {
         @inline(__always)

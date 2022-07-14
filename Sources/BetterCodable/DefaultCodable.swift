@@ -40,6 +40,10 @@ extension DefaultCodable: Encodable where Default.DefaultValue: Encodable {
 extension DefaultCodable: Equatable where Default.DefaultValue: Equatable { }
 extension DefaultCodable: Hashable where Default.DefaultValue: Hashable { }
 
+#if canImport(_Concurrency) && compiler(>=5.5.2)
+extension DefaultCodable: Sendable where Default.DefaultValue: Sendable { }
+#endif
+
 // MARK: - KeyedDecodingContainer
 public protocol BoolCodableStrategy: DefaultCodableStrategy where DefaultValue == Bool {}
 

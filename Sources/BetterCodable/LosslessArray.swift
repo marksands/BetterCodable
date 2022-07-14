@@ -42,3 +42,7 @@ extension LosslessArray: Encodable where T: Encodable {
 
 extension LosslessArray: Equatable where T: Equatable {}
 extension LosslessArray: Hashable where T: Hashable {}
+
+#if canImport(_Concurrency) && compiler(>=5.5.2)
+extension LosslessArray: Sendable where T: Sendable { }
+#endif

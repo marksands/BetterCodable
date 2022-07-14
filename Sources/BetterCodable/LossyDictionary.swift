@@ -106,3 +106,7 @@ extension LossyDictionary: Encodable where Key: Encodable, Value: Encodable {
 }
 
 extension LossyDictionary: Equatable where Key: Equatable, Value: Equatable { }
+
+#if canImport(_Concurrency) && compiler(>=5.5.2)
+extension LossyDictionary: Sendable where Key: Sendable, Value: Sendable { }
+#endif

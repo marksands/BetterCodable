@@ -49,3 +49,7 @@ extension DateValue: Hashable {
         hasher.combine(wrappedValue)
     }
 }
+
+#if canImport(_Concurrency) && compiler(>=5.5.2)
+extension DateValue: Sendable where Formatter.RawValue: Sendable { }
+#endif

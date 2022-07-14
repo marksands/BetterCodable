@@ -40,3 +40,7 @@ extension LossyArray: Encodable where T: Encodable {
 
 extension LossyArray: Equatable where T: Equatable { }
 extension LossyArray: Hashable where T: Hashable { }
+
+#if canImport(_Concurrency) && compiler(>=5.5.2)
+extension LossyArray: Sendable where T: Sendable { }
+#endif
