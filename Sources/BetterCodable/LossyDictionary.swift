@@ -105,4 +105,4 @@ extension LossyDictionary: Encodable where Key: Encodable, Value: Encodable {
     }
 }
 
-extension LossyDictionary: Equatable where Key: Equatable, Value: Equatable { }
+extension LossyDictionary: Equatable where Value: Equatable { }
