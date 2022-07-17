@@ -6,7 +6,7 @@ let package = Package(
     name: "BetterCodable",
     platforms: [
         .iOS(.v10),
-        .macOS(.v10_12),
+        .macOS(.v10_13),
         .tvOS(.v10),
         .watchOS(.v3)
     ],

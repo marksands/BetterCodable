@@ -24,7 +24,7 @@ public struct DefaultCodable<Default: DefaultCodableStrategy> {
     }
 }
 
-extension DefaultCodable: Decodable where Default.DefaultValue: Decodable {
+extension DefaultCodable: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.wrappedValue = (try? container.decode(Default.DefaultValue.self)) ?? Default.defaultValue
