@@ -16,24 +16,23 @@ public protocol DateValueCodableStrategy {
 /// `@DateValue` decodes dates using a `DateValueCodableStrategy` which provides custom decoding and encoding functionality.
 @propertyWrapper
 public struct DateValue<Formatter: DateValueCodableStrategy> {
-    private let value: Formatter.RawValue
     public var wrappedValue: Date
 
     public init(wrappedValue: Date) {
         self.wrappedValue = wrappedValue
-        self.value = Formatter.encode(wrappedValue)
     }
 }
 
 extension DateValue: Decodable where Formatter.RawValue: Decodable {
     public init(from decoder: Decoder) throws {
-        self.value = try Formatter.RawValue(from: decoder)
+        let value = try Formatter.RawValue(from: decoder)
         self.wrappedValue = try Formatter.decode(value)
     }
 }
 
 extension DateValue: Encodable where Formatter.RawValue: Encodable {
     public func encode(to encoder: Encoder) throws {
+        let value = Formatter.encode(wrappedValue)
         try value.encode(to: encoder)
     }
 }
