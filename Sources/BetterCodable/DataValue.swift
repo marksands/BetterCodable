@@ -5,10 +5,10 @@ import Foundation
 /// `DataValueCodableStrategy` provides a generic strategy type that the `DataValue` property wrapper can use to inject
 ///  custom strategies for encoding and decoding data values.
 ///
-///  TODO: Switch to DataProtocol; consider supporting
 public protocol DataValueCodableStrategy {
-    static func decode(_ value: String) throws -> Data
-    static func encode(_ data: Data) -> String
+    associatedtype DataType: MutableDataProtocol
+    static func decode(_ value: String) throws -> DataType
+    static func encode(_ data: DataType) -> String
 }
 
 /// Decodes and encodes data using a strategy type.
@@ -16,9 +16,9 @@ public protocol DataValueCodableStrategy {
 /// `@DataValue` decodes data using a `DataValueCodableStrategy` which provides custom decoding and encoding functionality.
 @propertyWrapper
 public struct DataValue<Coder: DataValueCodableStrategy> {
-    public var wrappedValue: Data
+    public var wrappedValue: Coder.DataType
 
-    public init(wrappedValue: Data) {
+    public init(wrappedValue: Coder.DataType) {
         self.wrappedValue = wrappedValue
     }
 }
@@ -35,5 +35,5 @@ extension DataValue: Encodable {
     }
 }
 
-extension DataValue: Equatable {}
-extension DataValue: Hashable {}
+extension DataValue: Equatable where Coder.DataType: Equatable {}
+extension DataValue: Hashable where Coder.DataType: Hashable {}
