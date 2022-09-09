@@ -74,4 +74,32 @@ class LosslessValueTests: XCTestCase {
         XCTAssertEqual(result.id, "1")
         XCTAssertEqual(result.bool, true)
     }
+    
+    func testDecodingBoolAsLogicalString() throws {
+        struct Response: Codable {
+            @LosslessBoolValue var a: Bool
+            @LosslessBoolValue var b: Bool
+            @LosslessBoolValue var c: Bool
+            @LosslessBoolValue var d: Bool
+            @LosslessBoolValue var e: Bool
+        }
+
+        let json = #"{ "a": "true", "b": "yes", "c": "1", "d": "y", "e": "t" }"#.data(using: .utf8)!
+        let result = try JSONDecoder().decode(Response.self, from: json)
+
+        XCTAssertEqual(result.a, true)
+        XCTAssertEqual(result.b, true)
+        XCTAssertEqual(result.c, true)
+        XCTAssertEqual(result.d, true)
+        XCTAssertEqual(result.e, true)
+        
+        let json2 = #"{ "a": "false", "b": "no", "c": "0", "d": "n", "e": "f" }"#.data(using: .utf8)!
+        let result2 = try JSONDecoder().decode(Response.self, from: json2)
+
+        XCTAssertEqual(result2.a, false)
+        XCTAssertEqual(result2.b, false)
+        XCTAssertEqual(result2.c, false)
+        XCTAssertEqual(result2.d, false)
+        XCTAssertEqual(result2.e, false)
+    }
 }

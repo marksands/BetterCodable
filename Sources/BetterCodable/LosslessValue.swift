@@ -100,12 +100,24 @@ public struct LosslessBooleanStrategy<Value: LosslessStringCodable>: LosslessDec
         }
 
         @inline(__always)
+        func decodeTruthyString() -> (Decoder) -> LosslessStringCodable? {
+            return {
+                (try? String.init(from: $0)).flatMap { value in
+                    switch value {
+                    case "true", "yes", "1", "y", "t": return true
+                    default: return false
+                    }
+                }
+            }
+        }
+
+        @inline(__always)
         func decodeBoolFromNSNumber() -> (Decoder) -> LosslessStringCodable? {
             return { (try? Int.init(from: $0)).flatMap { Bool(exactly: NSNumber(value: $0)) } }
         }
 
         return [
-            decode(String.self),
+            decodeTruthyString(),
             decodeBoolFromNSNumber(),
             decode(Bool.self),
             decode(Int.self),
