@@ -48,3 +48,45 @@ extension DateValue: Hashable {
         hasher.combine(wrappedValue)
     }
 }
+
+// MARK: -
+
+/// Decodes and encodes dates using a strategy type.
+///
+/// `@OptionalDateValue` decodes dates using a `DateValueCodableStrategy` which provides custom decoding and encoding functionality for an optional Date value that can be nil, unlike its counterpart `@DateValue`.
+@propertyWrapper
+public struct OptionalDateValue<Formatter: DateValueCodableStrategy> {
+    public var wrappedValue: Date?
+
+    public init(wrappedValue: Date?) {
+        self.wrappedValue = wrappedValue
+    }
+}
+
+extension OptionalDateValue: Decodable where Formatter.RawValue: Decodable {
+    public init(from decoder: Decoder) throws {
+        let value = try Formatter.RawValue(from: decoder)
+        self.wrappedValue = try Formatter.decode(value)
+    }
+}
+
+extension OptionalDateValue: Encodable where Formatter.RawValue: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        if let wrappedValue = wrappedValue {
+            let value = Formatter.encode(wrappedValue)
+            try value.encode(to: encoder)
+        }
+    }
+}
+
+extension OptionalDateValue: Equatable {
+    public static func == (lhs: OptionalDateValue<Formatter>, rhs: OptionalDateValue<Formatter>) -> Bool {
+        return lhs.wrappedValue == rhs.wrappedValue
+    }
+}
+
+extension OptionalDateValue: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(wrappedValue)
+    }
+}

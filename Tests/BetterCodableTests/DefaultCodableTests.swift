@@ -41,7 +41,7 @@ class DefaultCodableTest_DateStrategy: XCTestCase {
 		@DefaultCodable<Date.DefaultToNow>
 		fileprivate var discoverDate: Date
 	}
-	
+
 	func testDecodingAndEncodingWithDateStrategy() throws {
 		let expectedDate = Date(timeIntervalSinceReferenceDate: 222601260)
 		let jsonData = #"{ "discoverDate": "2008-01-21T09:41:00.000Z" }"#.data(using: .utf8)!
@@ -52,6 +52,24 @@ class DefaultCodableTest_DateStrategy: XCTestCase {
 		let str = String(data: data, encoding: .utf8)
 		XCTAssertEqual(str, #"{"discoverDate":"2008-01-21T09:41:00.000Z"}"#)
 	}
+}
+
+class DefaultCodableTest_NestedPropertyWrapper: XCTestCase {
+    struct Fixture: Equatable, Codable {
+        @OptionalDateValue<ISO8601WithFractionalSecondsStrategy>
+        fileprivate var value: Date?
+    }
+
+    func testDecodingAndEncodingWithNestedDateStrategy() throws {
+        let expectedDate = Date(timeIntervalSinceReferenceDate: 222601260)
+        let jsonData = #"{ "value": "2008-01-21T09:41:00.000Z" }"#.data(using: .utf8)!
+        let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
+        XCTAssertEqual(fixture.value, expectedDate)
+        
+        let data = try JSONEncoder().encode(fixture)
+        let str = String(data: data, encoding: .utf8)
+        XCTAssertEqual(str, #"{"value":"2008-01-21T09:41:00.000Z"}"#)
+    }
 }
 
 // MARK: -
