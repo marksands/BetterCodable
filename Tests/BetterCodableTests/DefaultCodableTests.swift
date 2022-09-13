@@ -55,6 +55,41 @@ class DefaultCodableTest_DateStrategy: XCTestCase {
 }
 
 // MARK: -
+// MARK: Nested Property Wrapper
+
+class DefaultCodableTest_NestedPropertyWrapper: XCTestCase {
+    enum DefaultToNowTimeStampDateValue: DefaultCodableStrategy {
+        static var defaultValue: DateValue<TimestampStrategy> {
+            .init(wrappedValue: Date(timeIntervalSince1970: 0))
+        }
+    }
+    
+    struct Fixture: Codable {
+        @DefaultCodable<DefaultToNowTimeStampDateValue>
+        @DateValue<TimestampStrategy>
+        var returnDate: Date
+    }
+    
+    func testNestedPropertyWrappersCanMergeDefaultCodableWithDateStrategy() throws {
+        let _1970 = Date(timeIntervalSince1970: 0)
+        let _1971 = Date(timeIntervalSince1970: 31536000)
+
+        let jsonData1 = #"{ "returnDate": null }"#.data(using: .utf8)!
+        let jsonData2 = #"{ }"#.data(using: .utf8)!
+        let jsonData3 = #"{ "returnDate": 31536000 }"#.data(using: .utf8)!
+        
+        let fixture1 = try JSONDecoder().decode(Fixture.self, from: jsonData1)
+        let fixture2 = try JSONDecoder().decode(Fixture.self, from: jsonData2)
+        let fixture3 = try JSONDecoder().decode(Fixture.self, from: jsonData3)
+        
+        XCTAssertEqual(fixture1.returnDate, _1970)
+        XCTAssertEqual(fixture2.returnDate, _1970)
+        XCTAssertEqual(fixture3.returnDate, _1971)
+    }
+}
+
+
+// MARK: -
 // MARK: Types with Containers
 
 class DefaultCodableTests_TypesWithContainers: XCTestCase {
