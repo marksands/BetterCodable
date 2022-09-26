@@ -6,10 +6,18 @@
 @propertyWrapper
 public struct LossyArray<T> {
     public var wrappedValue: [T]
+    public var projectedValue: Self { self }
 
     public init(wrappedValue: [T]) {
         self.wrappedValue = wrappedValue
     }
+
+    public struct FailedDecode {
+        var codingPath: [CodingKey]
+        var error: Error
+    }
+
+    public var failedDecodes: [FailedDecode] = []
 }
 
 extension LossyArray: Decodable where T: Decodable {
@@ -19,16 +27,19 @@ extension LossyArray: Decodable where T: Decodable {
         var container = try decoder.unkeyedContainer()
 
         var elements: [T] = []
+        var failedDecodes: [FailedDecode] = []
         while !container.isAtEnd {
             do {
                 let value = try container.decode(T.self)
                 elements.append(value)
             } catch {
+                failedDecodes.append(FailedDecode(codingPath: container.codingPath, error: error))
                 _ = try? container.decode(AnyDecodableValue.self)
             }
         }
 
         self.wrappedValue = elements
+        self.failedDecodes = failedDecodes
     }
 }
 
@@ -38,5 +49,13 @@ extension LossyArray: Encodable where T: Encodable {
     }
 }
 
-extension LossyArray: Equatable where T: Equatable { }
-extension LossyArray: Hashable where T: Hashable { }
+extension LossyArray: Equatable where T: Equatable {
+    public static func == (lhs: LossyArray<T>, rhs: LossyArray<T>) -> Bool {
+        lhs.wrappedValue == rhs.wrappedValue
+    }
+}
+extension LossyArray: Hashable where T: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(wrappedValue)
+    }
+}

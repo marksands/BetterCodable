@@ -17,6 +17,8 @@ class LossyArrayTests: XCTestCase {
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         XCTAssertEqual(fixture.values, [1, 3, 4])
         XCTAssertEqual(fixture.nonPrimitiveValues, [])
+        XCTAssertEqual(fixture.$values.failedDecodes.count, 1)
+        XCTAssertEqual(fixture.$nonPrimitiveValues.failedDecodes.count, 1)
     }
 
 	func testDecodingLossyArrayIgnoresLossyElements() throws {
@@ -24,6 +26,8 @@ class LossyArrayTests: XCTestCase {
         let fixture = try JSONDecoder().decode(Fixture.self, from: jsonData)
         XCTAssertEqual(fixture.values, [1, 4])
         XCTAssertEqual(fixture.nonPrimitiveValues, [])
+        XCTAssertEqual(fixture.$values.failedDecodes.count, 3)
+        XCTAssertEqual(fixture.$nonPrimitiveValues.failedDecodes.count, 1)
 	}
     
     func testEncodingDecodedLossyArrayIgnoresFailableElements() throws {
