@@ -82,9 +82,12 @@ class LosslessValueTests: XCTestCase {
             @LosslessBoolValue var c: Bool
             @LosslessBoolValue var d: Bool
             @LosslessBoolValue var e: Bool
+            @LosslessBoolValue var f: Bool
+            @LosslessBoolValue var g: Bool
         }
 
-        let json = #"{ "a": "true", "b": "yes", "c": "1", "d": "y", "e": "t" }"#.data(using: .utf8)!
+        let json = #"{ "a": "TRUE", "b": "yes", "c": "1", "d": "y", "e": "t","f":"11", "g":11 }"#.data(using: .utf8)!
+        
         let result = try JSONDecoder().decode(Response.self, from: json)
 
         XCTAssertEqual(result.a, true)
@@ -92,8 +95,10 @@ class LosslessValueTests: XCTestCase {
         XCTAssertEqual(result.c, true)
         XCTAssertEqual(result.d, true)
         XCTAssertEqual(result.e, true)
+        XCTAssertEqual(result.f, true)
+        XCTAssertEqual(result.g, true)
         
-        let json2 = #"{ "a": "false", "b": "no", "c": "0", "d": "n", "e": "f" }"#.data(using: .utf8)!
+        let json2 = #"{ "a": "FALSE", "b": "no", "c": "0", "d": "n", "e": "f","f":"-11", "g":-11  }"#.data(using: .utf8)!
         let result2 = try JSONDecoder().decode(Response.self, from: json2)
 
         XCTAssertEqual(result2.a, false)
@@ -101,5 +106,7 @@ class LosslessValueTests: XCTestCase {
         XCTAssertEqual(result2.c, false)
         XCTAssertEqual(result2.d, false)
         XCTAssertEqual(result2.e, false)
+        XCTAssertEqual(result2.f, false)
+        XCTAssertEqual(result2.g, false)
     }
 }
