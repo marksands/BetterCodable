@@ -9,7 +9,7 @@ import Foundation
 /// representing 39 minutes and 57 seconds after the 16th hour of December 19th, 1996 with an offset of -08:00 from UTC
 /// (Pacific Standard Time).
 @available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *)
-public struct ISO8601WithFractionalSecondsStrategy: DateValueCodableStrategy {
+public struct ISO8601WithFractionalSecondsStrategy: DateValueCodableStrategy, OptionalDateValueCodableStrategy {
     private static let formatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -25,5 +25,15 @@ public struct ISO8601WithFractionalSecondsStrategy: DateValueCodableStrategy {
 
     public static func encode(_ date: Date) -> String {
         return  Self.formatter.string(from: date)
+    }
+
+    public static func decode(_ value: String?) throws -> Date? {
+        guard let value else { return nil }
+        return try decode(value)
+    }
+
+    public static func encode(_ date: Date?) -> String? {
+        guard let date else { return nil }
+        return encode(date)
     }
 }

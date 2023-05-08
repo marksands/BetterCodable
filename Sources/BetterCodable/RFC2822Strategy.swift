@@ -8,7 +8,7 @@ import Foundation
 /// For example, decoding json data with a `String` representation of `"Tue, 24 Dec 2019 16:39:57 -0000"` produces a
 /// valid `Date` representing 39 minutes and 57 seconds after the 16th hour of December 24th, 2019 with an offset of
 /// -00:00 from UTC (Pacific Standard Time).
-public struct RFC2822Strategy: DateValueCodableStrategy {
+public struct RFC2822Strategy: DateValueCodableStrategy, OptionalDateValueCodableStrategy {
     private static let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
@@ -27,5 +27,15 @@ public struct RFC2822Strategy: DateValueCodableStrategy {
     
     public static func encode(_ date: Date) -> String {
         return RFC2822Strategy.dateFormatter.string(from: date)
+    }
+
+    public static func decode(_ value: String?) throws -> Date? {
+        guard let value else { return nil }
+        return try decode(value)
+    }
+
+    public static func encode(_ date: Date?) -> String? {
+        guard let date else { return nil }
+        return encode(date)
     }
 }

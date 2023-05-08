@@ -8,7 +8,7 @@ import Foundation
 /// For example, decoding json data with a `String` representation  of `"1996-12-19T16:39:57-08:00"` produces a valid `Date`
 /// representing 39 minutes and 57 seconds after the 16th hour of December 19th, 1996 with an offset of -08:00 from UTC
 /// (Pacific Standard Time).
-public struct ISO8601Strategy: DateValueCodableStrategy {
+public struct ISO8601Strategy: DateValueCodableStrategy, OptionalDateValueCodableStrategy {
     public static func decode(_ value: String) throws -> Date {
         guard let date = ISO8601DateFormatter().date(from: value) else {
             throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Invalid Date Format!"))
@@ -18,5 +18,15 @@ public struct ISO8601Strategy: DateValueCodableStrategy {
     
     public static func encode(_ date: Date) -> String {
         return ISO8601DateFormatter().string(from: date)
+    }
+
+    public static func decode(_ value: String?) throws -> Date? {
+        guard let value else { return nil }
+        return try decode(value)
+    }
+
+    public static func encode(_ date: Date?) -> String? {
+        guard let date else { return nil }
+        return encode(date)
     }
 }
