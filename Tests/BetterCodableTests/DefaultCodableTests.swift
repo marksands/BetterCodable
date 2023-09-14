@@ -199,6 +199,6 @@ class DefaultCodableTests_EnumWithAssociatedValue: XCTestCase {
 		
 		let data = try JSONEncoder().encode(fixture)
 		let str = String(data: data, encoding: .utf8)
-		XCTAssertEqual(str, #"{"value":{"int":4,"fish":"ziz"}}"#)
+		XCTAssertEqual(str, #"{"value":{"fish":"ziz","int":4}}"#)
 	}
 }
