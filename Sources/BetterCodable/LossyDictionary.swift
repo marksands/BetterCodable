@@ -29,7 +29,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
     }
 
     private struct AnyDecodableValue: Decodable {}
-    private struct LossyDecodableValue<Value: Decodable>: Decodable {
+    private struct LossyDecodableValue: Decodable {
         let value: Value
 
         public init(from decoder: Decoder) throws {
@@ -46,7 +46,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
 
             for (key, stringKey) in keys {
                 do {
-                    let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
+                    let value = try container.decode(LossyDecodableValue.self, forKey: key).value
                     elements[stringKey as! Key] = value
                 } catch {
                     _ = try? container.decode(AnyDecodableValue.self, forKey: key)
@@ -67,7 +67,7 @@ extension LossyDictionary: Decodable where Key: Decodable, Value: Decodable {
                 }
 
                 do {
-                    let value = try container.decode(LossyDecodableValue<Value>.self, forKey: key).value
+                    let value = try container.decode(LossyDecodableValue.self, forKey: key).value
                     elements[key.intValue! as! Key] = value
                 } catch {
                     _ = try? container.decode(AnyDecodableValue.self, forKey: key)
