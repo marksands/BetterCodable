@@ -48,3 +48,6 @@ extension DateValue: Hashable {
         hasher.combine(wrappedValue)
     }
 }
+
+extension DateValue: Equatable where Formatter.RawValue: Equatable {}
+extension DateValue: Hashable where Formatter.RawValue: Hashable {}
